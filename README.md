@@ -32,15 +32,17 @@ On suppose deux équipes T1 et T2.
 
 
 
-Un épisode (jour) du jeu se déroule de la manière suivante: 
-* les équipes décident de l'allocation de leurs joueurs, selon une stratégie donnée. 
-* dans le cas où l'allocation visée n'est pas possible (par exemple si T1 décide d'allouer 5 joeurs à la fiole 1 alors qu'il y a déjà 4 joueurs autour), le joueur ne sera pas compté. 
-* lorsque les joeurs ont atteint les fioles visées, l'arbitre compte les points, c'est-à-dire le nombre de fioles remportées par chaque équipe
-
 
 
 
 ### Déroulement d'une partie 
+
+Un épisode (jour) du jeu se déroule de la manière suivante: 
+* les équipes décident de l'allocation de leurs joueurs, selon une stratégie donnée. 
+* dans le cas où l'allocation visée n'est pas possible (par exemple si T1 décide d'allouer 5 joeurs à la fiole 1 alors qu'il y a déjà 4 joueurs autour), le joueur ne sera pas compté. 
+* lorsque les joueurs ont atteint les fioles visées, l'arbitre compte les points, c'est-à-dire le nombre de fioles remportées par chaque équipe
+
+
 
 Chaque équipe dispose d'une stratégie (qui peut être stochastique) mais qui reste fixe pour l'ensemble de la partie.  
 Une partie se déroule en un nombre fixe de journées. Les scores des joueurs sont les scores cumulés au cours des journées. 
@@ -88,7 +90,11 @@ Le module `search` qui accompagne le cours est également disponible. Il permet 
 ## Travail demandé
 
 ### Semaine 1
-**Prise en main**. A l'éxécution du fichier `main.py`, vous devez observer le comportement suivant: 
+**Prise en main**. A l'éxécution du fichier `main.py`, vous devez observer le comportement suivant: chaque joueur de l'équipe 0 choisit au hasard une fiole et une position libre autour de cette fiole, puis se déplace vers cette position. Puis les joueurs de l'équipe 1 font de même. 
+Lorsque tous les joueurs se sont déplacés, un affichage du nombre de joueurs de chaque équipe autour de chaque fiole est réalisé. 
+Vous devrez bien comprendre le code, implémenter le décompte des points; puis répéter le jeu un nombre fixe d'épisodes, et afficher l'équipe gagnante au final. 
+Afin de préserver l'équité, l'ordre de priorité devrait être inversé chaque joueur. 
+
 ### Semaine 2 et 3
 **Mise en place et test de différentes stratégies**. Il est possible de définir pour ce jeu : 
 * des stratégies **stationnaires**: tétu (toujours jouer la même distribution), aléatoire uniforme (chaque joueur choisit de manière uniforme parmi les fioles), aléatoire expert (choisir une distribution parmi un ensemble de distributions prédéfinies), aléatoire avec coordination (pour favoriser les chances de choisir la même fiole), etc. 
