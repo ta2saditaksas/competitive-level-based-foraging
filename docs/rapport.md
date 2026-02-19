@@ -1,8 +1,8 @@
 # Rapport de projet
 
-## Groupe
-* XXX
-* YYY
+## Groupe 1
+* Amel BEN CHABANE
+* Tassadit AKSAS
 
 ## Description des choix importants d'implémentation
 
