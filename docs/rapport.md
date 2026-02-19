@@ -1,18 +1,16 @@
 # Rapport de projet
 
 ## Groupe 1
-* Amel BEN CHABANE
-* Tassadit AKSAS
+* Amel BEN CHABANE 21304456
+* Tassadit AKSAS 21302943
 
 ## Description des choix importants d'implémentation
 
-Blablabla
 
 ## Description des stratégies proposées
 
-Blablabla
+
 
 ## Description des résultats
 Comparaison entre les stratégies. Bien indiquer les cartes utilisées.
 
-Blablabla
