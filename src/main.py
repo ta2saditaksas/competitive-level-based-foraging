@@ -168,6 +168,47 @@ def main():
                     are_here[i]+=1
         return are_here
 
+    def get_item_color(item):
+        name = str(getattr(item, "firstname", item)).lower()
+        if "yellow" in name or "jaune" in name:
+            return "yellow"
+        if "red" in name or "rouge" in name:
+            return "red"
+        if "green" in name or "vert" in name:
+            return "green"
+        if "blue" in name or "bleu" in name:
+            return "blue"
+        raise ValueError("Couleur inconnue pour la fiole: firstname=" + name)
+
+    def winner_for_vial(color, n0, n1):
+        def majority():
+            if n0 > n1: return 0
+            if n1 > n0: return 1
+            return None
+
+        if color == "yellow":
+            if n0 < 1 and n1 < 1: return None
+            if n0 >= 1 and n1 < 1: return 0
+            if n1 >= 1 and n0 < 1: return 1
+            return majority()
+
+        if color == "red":
+            if n0 < 2 and n1 < 2: return None
+            if n0 >= 2 and n1 < 2: return 0
+            if n1 >= 2 and n0 < 2: return 1
+            return majority()
+
+        if color == "green":
+            if (n0 + n1) < 3: return None
+            return majority()
+
+        if color == "blue":
+            if n0 == 1 and n1 >= 2: return 0
+            if n1 == 1 and n0 >= 2: return 1
+            if n0 < 2 and n1 < 2: return None
+            if n0 >= 2 and n1 < 2: return 0
+            if n1 >= 2 and n0 < 2: return 1
+            return majority()
 
 
 
@@ -175,9 +216,10 @@ def main():
     # Strategie aleatoire
     # -------------------------------
 
+    total_score = [0,0]
 
     for e in range(nb_episodes):
-        priority=[0,1]
+        priority = [0, 1] if (e % 2 == 0) else [1, 0]
         for t in priority:
             print("Team ",t)
             path = []
@@ -248,8 +290,27 @@ def main():
 
 
 
-        # calcul des points
-        #TODO
+        episode_score = [0, 0]
+
+        print("\n---- Décompte des fioles ----")
+        for vial in items:
+            n0, n1 = players_around_item(vial)
+            color = get_item_color(vial)
+            w = winner_for_vial(color, n0, n1)
+
+            if w is None:
+                print(f"Fiole {vial.get_rowcol()} ({color}) : T0={n0}, T1={n1} -> personne")
+            else:
+                print(f"Fiole {vial.get_rowcol()} ({color}) : T0={n0}, T1={n1} -> team{w}")
+                episode_score[w] += 1
+
+        print("Score épisode:", episode_score)
+
+        total_score[0] += episode_score[0]
+        total_score[1] += episode_score[1]
+        print("Score total:", total_score)
+        print("----------------------------\n")
+
 
         # remettre les joueurs à leur pos initiale a la fin de l'episode
 
@@ -260,6 +321,13 @@ def main():
                 p.set_rowcol(x,y)
                 j+=1
 
+    print("\n=== FIN PARTIE ===")
+    if total_score[0] > total_score[1]:
+        print("Gagnant final: TEAM 0")
+    elif total_score[1] > total_score[0]:
+        print("Gagnant final: TEAM 1")
+    else:
+        print("Egalité parfaite")
 
     pygame.quit()
 
