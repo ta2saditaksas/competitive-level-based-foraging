@@ -38,7 +38,7 @@ def strategy_random_with_coordination(items, nb_players):
     return [chosen_flask] * nb_players
 
 #strategie aleatoire expert
-def strategy_aléatoire_expert(items, expert_allocations):
+def strategy_aleatoire_expert(items, expert_allocations):
     """
     on attribue une fiole parmi un ensemble pedefini de configurations
     """
@@ -105,3 +105,40 @@ def update_regrets(team_id, chosen_indices, counts_team0, counts_team1, items, r
             regrets[alt_idx] += max(0, gain_alt - gain_reel)
 
     return regrets
+
+#les strategies hybride
+
+#strategie hybride coordination + regret
+def strategy_hybrid_coordination_regret(items, nb_players, regrets):
+    """
+    une partie des joueurs suit la fiole la plus regretee et les autres sont choisis avec regret matching
+    """
+    nb_flasks = len(items)
+    positive_regrets = [max(0, r) for r in regrets] #on garde seulement les ereeurs utiles
+    #si aucun regret on fait une coordination aleatoire
+    if sum(positive_regrets) == 0:
+        return strategy_random_with_coordination(items, nb_players)
+    #fiole la plus regretee
+    best_idx = positive_regrets.index(max(positive_regrets))
+    best_flask = items[best_idx]
+    chosen_flasks = []
+    #moitie des joueurs coordonnes sur la meilleure fiole
+    for _ in range(nb_players // 2):
+        chosen_flasks.append(best_flask) #la moitie des joueurs se coordonnent sur cette fiole
+    #autre moitie avec regret matching
+    remaining = nb_players - len(chosen_flasks)
+    other_flasks, _ = strategy_regret_matching(items, remaining, regrets) #l autre moitie utilise le regrte matching
+    chosen_flasks.extend(other_flasks)
+    return chosen_flasks
+
+
+#strategie hybride fictitious play + coordination
+def strategy_hybrid_fictitious_coordination(items, nb_players, history_team_0):
+    """
+    si on a de l historique on vise la fiole la plus jouee par l equipe adverse sinon on joue une coordination aleatoire
+    """
+    if not history_team_0: #on joie coordonnee au hasard
+        return strategy_random_with_coordination(items, nb_players)
+    fiole_cpt = {fiole: history_team_0.count(fiole) for fiole in items} #combien de fois chaque fiole a ete choisie par l adversaire
+    fiole_plus_choisie = max(fiole_cpt, key=fiole_cpt.get) #on recup la fiole la plue jouee par l adv
+    return [fiole_plus_choisie] * nb_players #coordination de l equipe
