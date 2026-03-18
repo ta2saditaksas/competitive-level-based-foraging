@@ -25,3 +25,11 @@ def strategy_stationary(tetue_allocation):
     on attribue des fioles fixes pour chaque joueur
     """
     return tetue_allocation
+
+#strategie aleatoire avec coordinations
+def strategy_random_with_coordination(items):
+    """
+    tous les joueurs d une meme equipe choisissent la meme fiole tiree de maniere aleatoire a chaque episode
+    """
+    chosen_flask = random.choice(items)
+    return [chosen_flask] * len(items)
