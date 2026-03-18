@@ -33,3 +33,10 @@ def strategy_random_with_coordination(items):
     """
     chosen_flask = random.choice(items)
     return [chosen_flask] * len(items)
+
+#strategie aleatoire expert
+def strategy_aléatoire_expert(items, expert_allocations):
+    """
+    on attribue une fiole parmi un ensemble pedefini de configurations
+    """
+    return random.choice(expert_allocations)
