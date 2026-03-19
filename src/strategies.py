@@ -154,3 +154,14 @@ def strategy_greedy(items, nb_players, regrets):
     best_idx = positive_regrets.index(max(positive_regrets))
     best_flask = items[best_idx]
     return [best_flask] * nb_players
+
+#strategie epsilon-regret matching
+def strategy_epsilon_regret_matching(items, nb_players, regrets, epsilon=0.2):
+    """
+    avec une proba epsilon on explore au hasard sinon on utilise regret matching
+    """
+    if random.random() < epsilon:
+        return strategy_random_uniform(items, nb_players)
+    else:
+        chosen_flasks, chosen_indices = strategy_regret_matching(items, nb_players, regrets)
+        return chosen_flasks, chosen_indices
