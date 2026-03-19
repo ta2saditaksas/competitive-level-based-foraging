@@ -19,8 +19,7 @@ import pySpriteWorld.glo
 
 from search.grid2D import ProblemeGrid2D
 from search import probleme
-from strategies import (strategy_random_uniform,strategy_fictitious_play,strategy_random_with_coordination,strategy_regret_matching,update_regrets,strategy_hybrid_coordination_regret,strategy_hybrid_fictitious_coordination,strategy_aleatoire_expert)
-
+from strategies import (strategy_random_uniform,strategy_fictitious_play,strategy_random_with_coordination,strategy_regret_matching,update_regrets,strategy_hybrid_coordination_regret,strategy_hybrid_fictitious_coordination,strategy_aleatoire_expert,strategy_greedy,strategy_epsilon_regret_matching,strategy_hybrid_greedy_regret)
 # ---- ---- ---- ---- ---- ----
 # ---- Main                ----
 # ---- ---- ---- ---- ---- ----
@@ -268,6 +267,15 @@ def main():
                 elif strategy_team_0 == "hybrid_fictitious":
                     choix_fiole = strategy_hybrid_fictitious_coordination(items, nb_players_team, history_team_1)
 
+                elif strategy_team_0 == "greedy":
+                    choix_fiole = strategy_greedy(items, nb_players_team, regrets_team_0)
+
+                elif strategy_team_0 == "epsilon_regret":
+                    choix_fiole, chosen_idx = strategy_epsilon_regret_matching(items, nb_players_team, regrets_team_0)
+                    chosen_indices_teams[0] = chosen_idx
+
+                elif strategy_team_0 == "hybrid_greedy_regret":
+                    choix_fiole = strategy_hybrid_greedy_regret(items, nb_players_team, regrets_team_0)
                 else:
                     choix_fiole = strategy_random_uniform(items, nb_players_team)
 
@@ -291,6 +299,15 @@ def main():
                 elif strategy_team_1 == "hybrid_fictitious":
                     choix_fiole = strategy_hybrid_fictitious_coordination(items, nb_players_team, history_team_0)
 
+                elif strategy_team_1 == "greedy":
+                    choix_fiole = strategy_greedy(items, nb_players_team, regrets_team_1)
+
+                elif strategy_team_1 == "epsilon_regret":
+                    choix_fiole, chosen_idx = strategy_epsilon_regret_matching(items, nb_players_team, regrets_team_1)
+                    chosen_indices_teams[1] = chosen_idx
+
+                elif strategy_team_1 == "hybrid_greedy_regret":
+                    choix_fiole = strategy_hybrid_greedy_regret(items, nb_players_team, regrets_team_1)
                 else:
                     choix_fiole = strategy_random_uniform(items, nb_players_team)
 
@@ -377,13 +394,13 @@ def main():
         history_team_1.extend([items[idx] for idx in chosen_indices_teams[1]])
 
         # mise a jour des regrets
-        if strategy_team_0 in ["regret", "hybrid_regret"]:
+        if strategy_team_0 in ["regret", "hybrid_regret", "epsilon_regret", "hybrid_greedy_regret", "greedy"]:
             regrets_team_0 = update_regrets(
                 0, chosen_indices_teams[0], counts_team0, counts_team1,
                 items, regrets_team_0, flask_color, winner_for_flask
             )
 
-        if strategy_team_1 in ["regret", "hybrid_regret"]:
+        if strategy_team_1 in ["regret", "hybrid_regret", "epsilon_regret", "hybrid_greedy_regret", "greedy"]:
             regrets_team_1 = update_regrets(
                 1, chosen_indices_teams[1], counts_team0, counts_team1,
                 items, regrets_team_1, flask_color, winner_for_flask
