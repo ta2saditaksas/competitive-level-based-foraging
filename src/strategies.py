@@ -142,3 +142,15 @@ def strategy_hybrid_fictitious_coordination(items, nb_players, history_team_0):
     fiole_cpt = {fiole: history_team_0.count(fiole) for fiole in items} #combien de fois chaque fiole a ete choisie par l adversaire
     fiole_plus_choisie = max(fiole_cpt, key=fiole_cpt.get) #on recup la fiole la plue jouee par l adv
     return [fiole_plus_choisie] * nb_players #coordination de l equipe
+
+#strategie greedy
+def strategy_greedy(items, nb_players, regrets):
+    """
+    tous les joueurs choisissent la fiole avec le plus grand regret si aucun regret on joue aleatoire uniforme
+    """
+    positive_regrets = [max(0, r) for r in regrets]
+    if sum(positive_regrets) == 0:
+        return strategy_random_uniform(items, nb_players)
+    best_idx = positive_regrets.index(max(positive_regrets))
+    best_flask = items[best_idx]
+    return [best_flask] * nb_players
