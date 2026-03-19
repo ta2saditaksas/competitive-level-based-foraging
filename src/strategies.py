@@ -161,7 +161,9 @@ def strategy_epsilon_regret_matching(items, nb_players, regrets, epsilon=0.2):
     avec une proba epsilon on explore au hasard sinon on utilise regret matching
     """
     if random.random() < epsilon:
-        return strategy_random_uniform(items, nb_players)
+        chosen_flasks = strategy_random_uniform(items, nb_players)
+        chosen_indices = [items.index(f) for f in chosen_flasks]
+        return chosen_flasks, chosen_indices
     else:
         chosen_flasks, chosen_indices = strategy_regret_matching(items, nb_players, regrets)
         return chosen_flasks, chosen_indices
