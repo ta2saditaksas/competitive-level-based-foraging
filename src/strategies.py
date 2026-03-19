@@ -165,3 +165,23 @@ def strategy_epsilon_regret_matching(items, nb_players, regrets, epsilon=0.2):
     else:
         chosen_flasks, chosen_indices = strategy_regret_matching(items, nb_players, regrets)
         return chosen_flasks, chosen_indices
+    
+#strategie hybride greedy + regret
+def strategy_hybrid_greedy_regret(items, nb_players, regrets):
+    """
+    une partie des joueurs suit greedy et l autre partie suit regret matching
+    """
+    positive_regrets = [max(0, r) for r in regrets]
+    if sum(positive_regrets) == 0:
+        return strategy_random_uniform(items, nb_players)
+    best_idx = positive_regrets.index(max(positive_regrets))
+    best_flask = items[best_idx]
+    chosen_flasks = []
+    #moitie des joueurs en greedy
+    for _ in range(nb_players // 2):
+        chosen_flasks.append(best_flask)
+    #autre moitie en regret matching
+    remaining = nb_players - len(chosen_flasks)
+    other_flasks, _ = strategy_regret_matching(items, remaining, regrets)
+    chosen_flasks.extend(other_flasks)
+    return chosen_flasks
