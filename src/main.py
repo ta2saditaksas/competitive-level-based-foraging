@@ -32,12 +32,12 @@ def init(_boardname=None):
     game = Game('Cartes/' + name + '.json', SpriteBuilder)
     game.O = Ontology(True, 'SpriteSheet-32x32/tiny_spritesheet_ontology.csv')
     game.populate_sprite_names(game.O)
-    game.fps = 10  # frames per second
+    game.fps = 0  # frames per second
     game.mainiteration()
     player = game.player
 
-def main():
-    init()
+def main(boardname="mixed-map", strat0="random", strat1="coordination"):
+    init(boardname)
 
     # -------------------------------
     # Initialisation
@@ -57,7 +57,10 @@ def main():
     items = [o for o in game.layers["ramassable"]]  # fioles
     nb_fioles = len(items)
 
-    nb_episodes = 20 
+    nb_episodes = 10
+    #choix de strategie pour chaque equipe
+    strategy_team_0 = strat0
+    strategy_team_1 = strat1
 
     # -------------------------------
     # Fonctions pour récupérer les coordonnées
@@ -73,6 +76,9 @@ def main():
     # Rapport carte
     # -------------------------------
     print("lecture carte")
+    print("carte :", boardname)
+    print("team 0 :", strategy_team_0)
+    print("team 1 :", strategy_team_1)
     print("-------------------------------------------")
     print('joueurs:', nb_players)
     print("fioles:", nb_fioles)
@@ -153,6 +159,7 @@ def main():
         (19, 1): "yellow",
         (17, 4): "red",
         (21, 1): "green",
+        (20, 3): "green",
     }
 
     def flask_color(flask):
@@ -226,9 +233,7 @@ def main():
     #regrets de chaque equipe (un regret par fiole)
     regrets_team_0 = [0] * len(items)
     regrets_team_1 = [0] * len(items)
-    #choix de strategie pour chaque equipe
-    strategy_team_0 = "random"
-    strategy_team_1 = "coordination"
+  
 
     for e in range(nb_episodes):
         # équité : on inverse la priorité à chaque épisode
@@ -359,7 +364,7 @@ def main():
                     team[t][p].set_rowcol(row, col)
                     game.mainiteration()
 
-            # -------------------------------
+        # -------------------------------
         # Calcul du score de l'épisode
         # -------------------------------
         score_episode = [0, 0]
@@ -418,7 +423,7 @@ def main():
         game.mainiteration()
 
     # gagnant final
-    print("\n===== FIN PARTIE =====")
+    print("\n******FIN PARTIE******")
     if score_total[0] > score_total[1]:
         print("Equipe 0 gagne !")
     elif score_total[1] > score_total[0]:
@@ -426,12 +431,38 @@ def main():
     else:
         print("Egalité !")
 
-    pygame.quit()
+    print("RESULTAT FINAL :", boardname, "|", strategy_team_0, "vs", strategy_team_1, "= ", score_total)
+    
 
    
 
 if __name__ == '__main__':
-    main()
-    
+    boards = ["yellow-map", "red-map", "green-map", "blue-map", "mixed-map"]
+
+    strategies_list = [
+        "random",
+        "coordination",
+        "fictitious",
+        "regret",
+        "hybrid_regret",
+        "hybrid_fictitious",
+        "greedy",
+        "epsilon_regret",
+        "hybrid_greedy_regret"
+    ]
+
+    # pour commencer doucement, tu peux réduire ces listes
+    # boards = ["mixed-map"]
+    # strategies_list = ["random", "coordination", "regret", "greedy"]
+
+    for board in boards:
+        for strat0 in strategies_list:
+            for strat1 in strategies_list:
+                print("\n************************************")
+                print("TEST :", board, "|", strat0, "vs", strat1)
+                print("************************************")
+                main(board, strat0, strat1)
+
+    pygame.quit()
 
 
