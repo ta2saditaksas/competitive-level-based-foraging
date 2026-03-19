@@ -9,6 +9,7 @@ import sys
 from itertools import chain
 
 import pygame
+import csv 
 
 from pySpriteWorld.gameclass import Game, check_init_game_done
 from pySpriteWorld.spritebuilder import SpriteBuilder
@@ -432,11 +433,17 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
         print("Egalité !")
 
     print("RESULTAT FINAL :", boardname, "|", strategy_team_0, "vs", strategy_team_1, "= ", score_total)
+    with open("results.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([boardname, strategy_team_0, strategy_team_1, score_total[0], score_total[1]])
     
 
    
 
 if __name__ == '__main__':
+    with open("results.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["map", "strat0", "strat1", "score0", "score1"])
     boards = ["yellow-map", "red-map", "green-map", "blue-map", "mixed-map"]
 
     strategies_list = [
@@ -448,13 +455,16 @@ if __name__ == '__main__':
         "hybrid_fictitious",
         "greedy",
         "epsilon_regret",
-        "hybrid_greedy_regret"
+        "hybrid_greedy_regret",
+        "strategy_stationary",
+        "strategy_aleatoire_expert"
     ]
 
     # pour commencer doucement, tu peux réduire ces listes
     # boards = ["mixed-map"]
     # strategies_list = ["random", "coordination", "regret", "greedy"]
 
+   
     for board in boards:
         for strat0 in strategies_list:
             for strat1 in strategies_list:
