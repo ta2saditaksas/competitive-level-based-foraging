@@ -21,14 +21,19 @@ import pySpriteWorld.glo
 from search.grid2D import ProblemeGrid2D
 from search import probleme
 from strategies import (
-    strategy_random_uniform,strategy_fictitious_play,
-    strategy_random_with_coordination,strategy_regret_matching,
-    update_regrets,strategy_hybrid_coordination_regret,
+    strategy_random_uniform,
+    strategy_fictitious_play,
+    strategy_random_with_coordination,
+    strategy_regret_matching,
+    strategy_stationary,
+    strategy_aleatoire_expert,
+    update_regrets,
+    strategy_hybrid_coordination_regret,
     strategy_hybrid_fictitious_coordination,
-    strategy_aleatoire_expert,strategy_greedy,
+    strategy_greedy,
     strategy_epsilon_regret_matching,
     strategy_hybrid_greedy_regret)
-
+    
 #Main
 
 game = Game()
@@ -67,6 +72,8 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     strategy_team_0 = strat0
     strategy_team_1 = strat1
 
+    
+
     # Fonctions pour récupérer les coordonnées
 
     def item_states(items):
@@ -100,6 +107,15 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
 
     assert len(team[0]) == len(team[1])
     nb_players_team = int(nb_players / 2)
+
+    stationary_allocation = [items[i % len(items)] for i in range(nb_players_team)]
+
+    expert_allocations = [
+        [items[0]] * nb_players_team,
+        [items[1]] * nb_players_team,
+        [items[i % len(items)] for i in range(nb_players_team)],
+        [items[(i // 2) % len(items)] for i in range(nb_players_team)]
+    ]
 
     init_states = [[], []]
     init_states[0] = player_states(team[0])
@@ -268,6 +284,10 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
 
                 elif strategy_team_0 == "hybrid_greedy_regret":
                     choix_fiole = strategy_hybrid_greedy_regret(items, nb_players_team, regrets_team_0)
+                elif strategy_team_0 == "stationary":
+                    choix_fiole = strategy_stationary(stationary_allocation)
+                elif strategy_team_0 == "aleatoire_expert":
+                    choix_fiole = strategy_aleatoire_expert(items, expert_allocations)
                 else:
                     choix_fiole = strategy_random_uniform(items, nb_players_team)
 
@@ -300,6 +320,11 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
 
                 elif strategy_team_1 == "hybrid_greedy_regret":
                     choix_fiole = strategy_hybrid_greedy_regret(items, nb_players_team, regrets_team_1)
+                elif strategy_team_1 == "stationary":
+                    choix_fiole = strategy_stationary(stationary_allocation)
+
+                elif strategy_team_1 == "aleatoire_expert":
+                    choix_fiole = strategy_aleatoire_expert(items, expert_allocations)
                 else:
                     choix_fiole = strategy_random_uniform(items, nb_players_team)
 
@@ -437,8 +462,8 @@ if __name__ == '__main__':
         "greedy",
         "epsilon_regret",
         "hybrid_greedy_regret",
-        "strategy_stationary",
-        "strategy_aleatoire_expert"
+        "stationary",
+        "aleatoire_expert"
     ]
 
     #boards = ["mixed-map"]
