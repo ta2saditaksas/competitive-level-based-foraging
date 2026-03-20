@@ -21,9 +21,8 @@ import pySpriteWorld.glo
 from search.grid2D import ProblemeGrid2D
 from search import probleme
 from strategies import (strategy_random_uniform,strategy_fictitious_play,strategy_random_with_coordination,strategy_regret_matching,update_regrets,strategy_hybrid_coordination_regret,strategy_hybrid_fictitious_coordination,strategy_aleatoire_expert,strategy_greedy,strategy_epsilon_regret_matching,strategy_hybrid_greedy_regret)
-# ---- ---- ---- ---- ---- ----
-# ---- Main                ----
-# ---- ---- ---- ---- ---- ----
+
+#Main
 
 game = Game()
 
@@ -33,16 +32,14 @@ def init(_boardname=None):
     game = Game('Cartes/' + name + '.json', SpriteBuilder)
     game.O = Ontology(True, 'SpriteSheet-32x32/tiny_spritesheet_ontology.csv')
     game.populate_sprite_names(game.O)
-    game.fps = 0  # frames per second
+    game.fps = 0  #frames per second
     game.mainiteration()
     player = game.player
 
 def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     init(boardname)
 
-    # -------------------------------
-    # Initialisation
-    # -------------------------------
+    #Initialisation
 
     nb_lignes = game.spriteBuilder.rowsize
     nb_cols = game.spriteBuilder.colsize
@@ -63,9 +60,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     strategy_team_0 = strat0
     strategy_team_1 = strat1
 
-    # -------------------------------
     # Fonctions pour récupérer les coordonnées
-    # -------------------------------
 
     def item_states(items):
         return [o.get_rowcol() for o in items]
@@ -73,9 +68,8 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     def player_states(players):
         return [p.get_rowcol() for p in players]
 
-    # -------------------------------
     # Rapport carte
-    # -------------------------------
+
     print("lecture carte")
     print("carte :", boardname)
     print("team 0 :", strategy_team_0)
@@ -87,9 +81,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     print("colonnes:", nb_cols)
     print("-------------------------------------------")
 
-    # -------------------------------
     # Équipes (2 x 8 joueurs)
-    # -------------------------------
 
     team = [[], []]
     for o in players:
@@ -106,9 +98,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     init_states[0] = player_states(team[0])
     init_states[1] = player_states(team[1])
 
-    # -------------------------------
     # Positions autour + positions légales
-    # -------------------------------
 
     def around_pos(pos):
         x, y = pos
@@ -131,8 +121,8 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
 
     def players_around_item(f):
         """
-        :param f: objet fiole
-        :return: [nb_team0, nb_team1]
+        param f: objet fiole
+        return: [nb_team0, nb_team1]
         """
         are_here = [0, 0]
         pos = f.get_rowcol()
@@ -142,18 +132,12 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
                     are_here[i] += 1
         return are_here
 
-    # -------------------------------
-    # Couleur d'une fiole via tileid
-    # -------------------------------
-    # IMPORTANT :
-    # tileid = (row, col) dans la spritesheet (16 colonnes).
-    # On a vérifié via les .json:
-    # blue-map => gid 293 => tileid (18,4) => donc (18,4) = "blue"
-    #
+    #Couleur d'une fiole via tileid
+    #tileid = (row, col) dans la spritesheet (16 colonnes).
+    #On a vverifie via les .json:
+    #blue-map => gid 293 => tileid (18,4) => donc (18,4) = "blue"
     # Hypothèse cohérente sur les autres maps :
-    # gid 306 -> (19,1) jaune ; gid 277 -> (17,4) rouge ; gid 338 -> (21,1) vert.
-    #
-    # Si jamais ça ne colle pas : tu peux afficher f.tileid sur chaque map et ajuster.
+    #gid 306 -> (19,1) jaune ; gid 277 -> (17,4) rouge ; gid 338 -> (21,1) vert.
 
     TILEID_TO_COLOR = {
         (18, 4): "blue",
@@ -168,17 +152,15 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
             return TILEID_TO_COLOR[flask.tileid]
         raise ValueError(f"tileid fiole inconnu: {flask.tileid} (ajoute-le dans TILEID_TO_COLOR)")
 
-    # -------------------------------
-    # Règles de victoire sur une fiole
-    # -------------------------------
+    #règles de victoire sur une fiole
 
     def winner_for_flask(color, c0, c1):
-        # égalité => personne ne collecte
+        #egalite => personne ne collecte
         if c0 == c1:
             return None
 
         if color == "yellow":
-            # min 1 joueur de la même équipe
+            #min 1 joueur de la meme equipe
             if c0 >= 1 and c1 >= 1:
                 return 0 if c0 > c1 else 1
             if c0 >= 1:
@@ -188,7 +170,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
             return None
 
         if color == "red":
-            # min 2 joueurs de la même équipe
+            #min 2 joueurs de la meme equipe
             if c0 >= 2 and c1 >= 2:
                 return 0 if c0 > c1 else 1
             if c0 >= 2:
@@ -198,20 +180,20 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
             return None
 
         if color == "green":
-            # min 3 joueurs au total
+            #min 3 joueurs au total
             if c0 + c1 < 3:
                 return None
             return 0 if c0 > c1 else 1
 
         if color == "blue":
-            # Exception "solo" :
-            # si un joueur est seul (==1) et l'autre équipe a >=2, le solo gagne.
+            #exception solo :
+            #si un joueur est seul (==1) et l autre équipe a >=2 le solo gagne
             if c0 == 1 and c1 >= 2:
                 return 0
             if c1 == 1 and c0 >= 2:
                 return 1
 
-            # sinon comme rouge
+            #sinon comme rouge
             if c0 >= 2 and c1 >= 2:
                 return 0 if c0 > c1 else 1
             if c0 >= 2:
@@ -222,9 +204,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
 
         raise ValueError("Couleur inconnue: " + str(color))
 
-    # -------------------------------
-    # Strategie aleatoire + jeu multi-épisodes
-    # -------------------------------
+    #strategie aleatoire + jeu multi episodes
 
     score_total = [0, 0]
 
@@ -237,7 +217,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
   
 
     for e in range(nb_episodes):
-        # équité : on inverse la priorité à chaque épisode
+        #equite : on inverse la priorite a chaque episode
         priority = [0, 1] if (e % 2 == 0) else [1, 0]
         print("\n===== EPISODE", e, "priority =", priority, "=====")
 
@@ -250,9 +230,8 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
             choix_fiole = []
             choix_pos = []
 
-            # -------------------------------
             # choix de la strategie selon l equipe
-            # -------------------------------
+
             if t == 0:
                 if strategy_team_0 == "random":
                     choix_fiole = strategy_random_uniform(items, nb_players_team)
@@ -318,18 +297,17 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
                     choix_fiole = strategy_random_uniform(items, nb_players_team)
 
             
-            # -------------------------------
-            # placement + deplacement
-            # -------------------------------
+            #placement + deplacement
+
             for p in range(nb_players_team):
                 f = choix_fiole[p]
 
-                # si plus de place autour, on cherche une autre fiole
+                #si plus de place autour on cherche une autre fiole
                 essais = 0
                 while busy(f.get_rowcol()) and essais < len(items):
                     f = random.choice(items)
                     essais += 1
-                # si la strategie n a pas fourni les indices, on les reconstruit
+                #si la strategie n a pas fourni les indices on les reconstruit
                 if len(chosen_indices_teams[t]) < nb_players_team:
                     chosen_indices_teams[t].append(items.index(f))
                 else:
@@ -365,9 +343,8 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
                     team[t][p].set_rowcol(row, col)
                     game.mainiteration()
 
-        # -------------------------------
-        # Calcul du score de l'épisode
-        # -------------------------------
+        #calcul du score de l episode
+
         score_episode = [0, 0]
         counts_team0 = []
         counts_team1 = []
@@ -388,18 +365,18 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
             elif w == 1:
                 score_episode[1] += 1
 
-        # mise a jour du score total
+        #maj du score total
         score_total[0] += score_episode[0]
         score_total[1] += score_episode[1]
 
         print("Score épisode :", score_episode)
         print("Score total   :", score_total)
 
-        # mise a jour de l historique
+        #maj de l historique
         history_team_0.extend([items[idx] for idx in chosen_indices_teams[0]])
         history_team_1.extend([items[idx] for idx in chosen_indices_teams[1]])
 
-        # mise a jour des regrets
+        #maj des regrets
         if strategy_team_0 in ["regret", "hybrid_regret", "epsilon_regret", "hybrid_greedy_regret", "greedy"]:
             regrets_team_0 = update_regrets(
                 0, chosen_indices_teams[0], counts_team0, counts_team1,
@@ -412,9 +389,8 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
                 items, regrets_team_1, flask_color, winner_for_flask
             )
 
-        # -------------------------------
-        # Remettre les joueurs à leurs positions initiales
-        # -------------------------------
+        # remettre les joueurs a leurs positions initiales
+
         for i in [0, 1]:
             j = 0
             for p in team[i]:
@@ -423,7 +399,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
                 j += 1
         game.mainiteration()
 
-    # gagnant final
+    #gagnant final
     print("\n******FIN PARTIE******")
     if score_total[0] > score_total[1]:
         print("Equipe 0 gagne !")
@@ -437,8 +413,6 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
         writer = csv.writer(f)
         writer.writerow([boardname, strategy_team_0, strategy_team_1, score_total[0], score_total[1]])
     
-
-   
 
 if __name__ == '__main__':
     with open("results.csv", "w", newline="") as f:
@@ -460,11 +434,9 @@ if __name__ == '__main__':
         "strategy_aleatoire_expert"
     ]
 
-    # pour commencer doucement, tu peux réduire ces listes
-    # boards = ["mixed-map"]
-    # strategies_list = ["random", "coordination", "regret", "greedy"]
+    #boards = ["mixed-map"]
+    #strategies_list = ["random", "coordination", "regret", "greedy"]
 
-   
     for board in boards:
         for strat0 in strategies_list:
             for strat1 in strategies_list:
