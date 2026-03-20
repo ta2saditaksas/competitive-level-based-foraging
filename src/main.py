@@ -20,7 +20,14 @@ import pySpriteWorld.glo
 
 from search.grid2D import ProblemeGrid2D
 from search import probleme
-from strategies import (strategy_random_uniform,strategy_fictitious_play,strategy_random_with_coordination,strategy_regret_matching,update_regrets,strategy_hybrid_coordination_regret,strategy_hybrid_fictitious_coordination,strategy_aleatoire_expert,strategy_greedy,strategy_epsilon_regret_matching,strategy_hybrid_greedy_regret)
+from strategies import (
+    strategy_random_uniform,strategy_fictitious_play,
+    strategy_random_with_coordination,strategy_regret_matching,
+    update_regrets,strategy_hybrid_coordination_regret,
+    strategy_hybrid_fictitious_coordination,
+    strategy_aleatoire_expert,strategy_greedy,
+    strategy_epsilon_regret_matching,
+    strategy_hybrid_greedy_regret)
 
 #Main
 
