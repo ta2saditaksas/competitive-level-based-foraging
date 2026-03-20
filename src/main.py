@@ -95,7 +95,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     print("colonnes:", nb_cols)
     print("-------------------------------------------")
 
-    # Équipes (2 x 8 joueurs)
+    # equipees
 
     team = [[], []]
     for o in players:
@@ -121,7 +121,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
     init_states[0] = player_states(team[0])
     init_states[1] = player_states(team[1])
 
-    # Positions autour + positions légales
+    # positions
 
     def around_pos(pos):
         x, y = pos
@@ -155,7 +155,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
                     are_here[i] += 1
         return are_here
 
-    #Couleur d'une fiole via tileid
+    #couleur d'une fiole via tileid
     #tileid = (row, col) dans la spritesheet (16 colonnes).
     #On a vverifie via les .json:
     #blue-map => gid 293 => tileid (18,4) => donc (18,4) = "blue"
@@ -175,7 +175,7 @@ def main(boardname="mixed-map", strat0="random", strat1="coordination"):
             return TILEID_TO_COLOR[flask.tileid]
         raise ValueError(f"tileid fiole inconnu: {flask.tileid} (ajoute-le dans TILEID_TO_COLOR)")
 
-    #règles de victoire sur une fiole
+    #regles de victoire sur une fiole
 
     def winner_for_flask(color, c0, c1):
         #egalite => personne ne collecte
@@ -466,8 +466,8 @@ if __name__ == '__main__':
         "aleatoire_expert"
     ]
 
-    #boards = ["mixed-map"]
-    #strategies_list = ["random", "coordination", "regret", "greedy"]
+    ######boards = ["mixed-map"]
+    ######strategies_list = ["random", "coordination", "regret", "greedy"]
 
     for board in boards:
         for strat0 in strategies_list:
