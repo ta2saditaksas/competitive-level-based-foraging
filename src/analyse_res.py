@@ -77,7 +77,7 @@ plt.savefig(os.path.join(globaux_dir, "winrate_global.png"))
 plt.close()
 
 # -----------------------------
-# 4. Score moyen global par stratégie
+# 4. Score moyen global par strat
 # -----------------------------
 score_data = []
 
@@ -224,4 +224,18 @@ for i, s0 in enumerate(strategies):
         plt.savefig(os.path.join(duels_dir, f"{s0}_vs_{s1}.png"))
         plt.close()
 
+# -----------------------------
+# 8. Classement final des stratégies
+# -----------------------------
+ranking = winrate_df.copy()
+
+print("\n===== CLASSEMENT FINAL DES STRATEGIES =====")
+print(ranking)
+
+best_strategy = ranking.iloc[0]["strategy"]
+best_score = ranking.iloc[0]["winrate"]
+
+print("\n>>> MEILLEURE STRATEGIE :", best_strategy)
+print(">>> WINRATE :", round(best_score, 3))
 print("Tous les graphes ont été sauvegardés dans docs/graphs/")
+
