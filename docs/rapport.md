@@ -103,25 +103,27 @@ Les résultats sont enregistrés dans un fichier CSV puis analysés à l'aide de
 
 On observe que :
 
-- **epsilon_regret** est la stratégie la plus performante (~75%)
-- **random** est très efficace (~71%)
-- **regret** est également solide (~64%)
+- **random** est la stratégie la plus performante (~73%)
+- **regret** est également très efficace (~71%)
+- **epsilon_regret** reste performante (~68%)
 
-Cela montre que les stratégies combinant apprentissage et exploration sont les plus efficaces.
+Contrairement à ce que l'on pourrait attendre, les stratégies basées sur l'apprentissage ne dominent pas complètement.
+
+Cela montre que dans cet environnement, **l'imprévisibilité joue un rôle majeur**.
 
 ### Score moyen
 
 ![Score moyen](graphs/score_moyen_global.png)
 
 Les résultats confirment que les stratégies ayant le meilleur winrate sont aussi celles qui obtiennent les meilleurs scores moyens.
+La stratégie **random** obtient également de très bons scores moyens, ce qui renforce sa dominance globale.
 
 ## Analyse selon la carte
 
 ![Winrate par carte](graphs/winrate_par_carte.png)
 
-- **epsilon_regret** est performante sur toutes les cartes - stratégie robuste  
-- **random** reste très efficace - imprévisibilité  
-- certaines stratégies varient selon la carte  
+- **random** est performante sur la majorité des cartes - stratégie robuste  
+- **regret** et **epsilon_regret** restent compétitives.
 
 La carte **mixed-map** est la plus complexe, car elle combine plusieurs types de fioles et nécessite à la fois coordination et adaptation.
 
@@ -131,9 +133,9 @@ Cela montre que certaines stratégies sont sensibles à l'environnement.
 
 ![Heatmap](graphs/heatmap_duels.png)
 
-- **epsilon_regret domine presque toutes les stratégies**
-- **random est difficile à battre**
-- **coordination et greedy sont souvent dominées**
+- **random domine la majorité des stratégies**
+- **regret et epsilon_regret sont également solides**
+- **coordination et les stratégies hybrides sont souvent dominées**
 
 Cette représentation permet de compléter les résultats globaux en montrant les forces et faiblesses spécifiques de chaque stratégie face à un adversaire donné.
 
@@ -147,7 +149,7 @@ Conformément à l'énoncé, chaque couple de stratégies a été comparé.
 
 ![epsilon vs random](graphs_duels/epsilon_regret_vs_random.png)
 
-epsilon_regret reste légèrement supérieure grâce à sa capacité d'apprentissage.
+random reste globalement supérieure grâce à son imprévisibilité.
 
 ### regret vs greedy
 
@@ -171,6 +173,8 @@ Ces résultats globaux et ces comparaisons nous permettent maintenant d'analyser
   - Très bonnes performances globales.
   - Imprévisible donc difficile à contrer.
   - Surprend par son efficacité.
+  - Ne peut pas être exploitée par les stratégies adverses.
+  - S'avère être la stratégie la plus robuste dans cet environnement.
 
 - **Stratégie coordination :**
   - Très efficace sur les fioles nécessitant plusieurs joueurs (rouge, vert).
@@ -186,15 +190,15 @@ Ces résultats globaux et ces comparaisons nous permettent maintenant d'analyser
   - S'adapte bien aux environnements dynamiques.
 
 - **Stratégie ε-regret matching :**
-  - Meilleure que regret pur grâce à l'exploration.
-  - Évite de rester bloquée dans des choix sous-optimaux.
+  - Combine exploration et apprentissage.
+  - Performante, mais moins efficace que random dans cet environnement instable.
 
 - **Stratégie greedy :**
   - Très performante à court terme.
   - Peut manquer de diversité - vulnérable.
 
 - **Stratégies hybrides :**
-  - Certaines stratégies hybrides sont performantes, mais la stratégie epsilon_regret reste globalement la plus efficace grâce à son équilibre entre exploration et apprentissage.
+  - Certaines stratégies hybrides sont performantes, mais restent globalement moins efficaces que random dans ce contexte.
 
 ### Impact des cartes
 
@@ -207,11 +211,11 @@ Ces résultats globaux et ces comparaisons nous permettent maintenant d'analyser
 
 ## Conclusion générale
 
-Ce projet met en évidence l'importance de l'adaptation et de la coordination dans les systèmes multi-agents.
+Le facteur clé de performance dépend ici fortement du comportement des adversaires.
 
-Le facteur clé de performance est le compromis entre exploration et exploitation.
+Les résultats montrent que dans un environnement dynamique et compétitif, **l'imprévisibilité peut être plus efficace que l'apprentissage**.
 
-Les stratégies simples comme **random** ou **greedy** peuvent être efficaces dans certains contextes, mais restent limitées face à des stratégies adaptatives.
+La stratégie **random** obtient le meilleur winrate global (~73%), ce qui montre qu'une stratégie simple mais non déterministe peut surpasser des stratégies plus complexes.
 
 Les stratégies basées sur :
 
@@ -219,7 +223,7 @@ Les stratégies basées sur :
 - l'**exploration (epsilon)**  
 - les **approches hybrides**
 
-offrent les meilleures performances globales.
+restent performantes, mais peuvent être pénalisées face à un adversaire imprévisible.
 
 ## Perspectives d'amélioration
 
